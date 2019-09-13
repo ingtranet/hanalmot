@@ -5,7 +5,7 @@ import numpy as np
 def compare(original, tagged):
     result = list()
     
-    table = np.zeros((len(original), len(tagged)), dtype=np.uint8)
+    table = np.zeros((len(original), len(tagged)), dtype=np.uint16)
     
     for i, o in enumerate(original):
         for j, t in enumerate(tagged):
