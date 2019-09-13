@@ -1,0 +1,35 @@
+# https://taskfile.dev
+
+version: '2'
+
+tasks:
+  corpus_txt_to_json:
+    sources:
+      - resources/answer_exbrain.txt
+      - resources/test_exbrain.txt
+      - resources/training_corpus_exbrain.txt
+    generates:
+      - resources/training.json
+      - resources/test.json
+    cmds:
+      - python ./scripts/make_json_corpus.py
+  corpus_simple_pos:
+    deps: ['corpus_txt_to_json']
+    sources:
+      - resources/training.json
+      - resources/test.json
+    generates:
+      - resources/training_simple.json
+      - resources/test_simple.json
+    cmds:
+      - python ./scripts/make_simple_pos.py
+  corpus_no_add_tag:
+    deps: ['corpus_simple_pos']
+    sources:
+      - resources/training_simple.json
+      - resources/test_simple.json
+    generates:
+      - resources/training_simple_noadd.json
+      - resources/test_simple_noadd.json
+    cmds:
+      - python ./scripts/remove_added_tags.py
