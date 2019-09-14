@@ -2,6 +2,27 @@ import json
 from itertools import chain
 import numpy as np
 
+simple_pos_iv = {
+    'Noun': ('NNB', 'NNG', 'NNP', 'XR', 'XSN', 'NN', 'N'),
+    'Number': ('NR',), 
+    'Pronoun': ('NP',), 
+    'Determiner': ('MM', 'XPN', 'XP', 'M'), 
+    'Adverb' : ('MAG', 'MAJ', 'MA'), 
+    'Josa': ('JC', 'JKB', 'JKC', 'JKG', 'JKO', 'JKQ', 'JKS', 'JKV', 'JX', 'JK', 'J'),
+    'Exclamation': ('IC', 'I'),
+    'Adjective' : ('VA', 'VCN', 'VCP', 'XSA', 'VC'), 
+    'Verb': ('VV', 'VX', 'XSV', 'V', 'XS', 'XSB'),
+    'Eomi': ('EC', 'EF', 'EP', 'ETM', 'ETN', 'E', 'ET'), 
+    'Unk': ('NA',), 
+    'Symbol': ('SE', 'SF', 'SH', 'SL', 'SN', 'SO', 'SP', 'SS', 'SW', 'S'),
+    'Space': ('Space',)
+}
+
+simple_pos = dict()
+for k, v in simple_pos_iv.items():
+    for p in v:
+        simple_pos[p] = k
+
 def compare(original, tagged):
     result = list()
     
@@ -68,37 +89,3 @@ def remove_index(parsed, idxs):
             result.append(t)
             
     return result
-
-train_i = open('./resources/training_simple.json')
-train_o = open('./resources/training_simple_noadd.json', mode='w')
-
-for line in train_i:
-    line = json.loads(line)
-    original = line['original']
-    tagged = line['tagged']
-    tagged_string = ''.join(token['token'] for token in line['tagged'])
-    changes = split_changes(compare(original, tagged_string))
-    add_changes = list(chain(*[c for c in changes if '-' not in  list(map(lambda x: x[0], c))]))
-    idx_to_remove = [c[3] for c in add_changes]
-    line['tagged'] = remove_index(tagged, idx_to_remove)
-    train_o.write(json.dumps(line, ensure_ascii=False) + '\n')
-
-train_i.close()
-train_o.close()
-
-test_i = open('./resources/test_simple.json')
-test_o = open('./resources/test_simple_noadd.json', mode='w')
-
-for line in test_i:
-    line = json.loads(line)
-    original = line['original']
-    tagged = line['tagged']
-    tagged_string = ''.join(token['token'] for token in line['tagged'])
-    changes = split_changes(compare(original, tagged_string))
-    add_changes = list(chain(*[c for c in changes if '-' not in  list(map(lambda x: x[0], c))]))
-    idx_to_remove = [c[3] for c in add_changes]
-    line['tagged'] = remove_index(tagged, idx_to_remove)
-    test_o.write(json.dumps(line, ensure_ascii=False) + '\n')
-    
-test_i.close()
-test_o.close()

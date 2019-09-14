@@ -4,6 +4,7 @@ version: '2'
 
 tasks:
   corpus_txt_to_json:
+    silent: true
     sources:
       - resources/answer_exbrain.txt
       - resources/test_exbrain.txt
@@ -12,8 +13,9 @@ tasks:
       - resources/training.json
       - resources/test.json
     cmds:
-      - python ./scripts/make_json_corpus.py
+      - python ./scripts/python/make_json_corpus.py
   corpus_simple_pos:
+    silent: true
     deps: ['corpus_txt_to_json']
     sources:
       - resources/training.json
@@ -22,14 +24,15 @@ tasks:
       - resources/training_simple.json
       - resources/test_simple.json
     cmds:
-      - python ./scripts/make_simple_pos.py
-  corpus_no_add_tag:
+      - python ./scripts/python/make_simple_pos.py
+  corpus_del_data:
+    silent: true
     deps: ['corpus_simple_pos']
     sources:
       - resources/training_simple.json
       - resources/test_simple.json
     generates:
-      - resources/training_simple_noadd.json
-      - resources/test_simple_noadd.json
+      - resources/training_del_indices.tsv
+      - resources/test_del_indices.tsv
     cmds:
-      - python ./scripts/remove_added_tags.py
+      - python ./scripts/python/make_del_data.py
